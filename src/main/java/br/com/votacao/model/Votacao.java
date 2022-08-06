@@ -22,7 +22,7 @@ import javax.persistence.UniqueConstraint;
 import br.com.votacao.model.enums.TipoSituacaoVotacaoEnum;
 import lombok.Data;
 
-@Entity
+@Entity(name = "Votacao")
 @Data
 @Table (name = "votacao", uniqueConstraints = @UniqueConstraint(columnNames = {"idPauta", "situacao"}, name = "UK_votacao_pauta" ))
 public class Votacao {

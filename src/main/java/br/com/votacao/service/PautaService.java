@@ -1,8 +1,13 @@
 package br.com.votacao.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.votacao.model.Pauta;
@@ -10,18 +15,20 @@ import br.com.votacao.model.dto.PautaDTO;
 import br.com.votacao.model.dto.VotacaoDto;
 import br.com.votacao.repository.AssociadoRepository;
 import br.com.votacao.repository.PautaRepository;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class PautaService {
 	
 	@Autowired
-    private final PautaRepository repository;
+    private PautaRepository repository;
 	@Autowired
-	private final AssociadoRepository associadoRepository;
+	private AssociadoRepository associadoRepository;
 	@Autowired
 	private VotacaoService votacaoService;
+	
+	public Optional<Pauta> findId(long id) {
+		return repository.findById(id);
+	}
 	
     public PautaDTO findById(long id) throws Exception {
     	
@@ -43,5 +50,18 @@ public class PautaService {
     	
     	return null;
     }
+
+	public Page<Pauta> findAll(Pageable pageable) {
+		
+		return repository.findAll(pageable);
+	}
+
+	public List<PautaDTO> findByTitulo(String titulo) {
+		return repository.findByTitulo(titulo);
+	}
+
+	public @Valid Pauta save(@Valid Pauta pauta) {
+		return repository.save(pauta);
+	}
     
 }

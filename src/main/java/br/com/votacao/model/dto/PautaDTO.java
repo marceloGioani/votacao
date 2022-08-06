@@ -20,6 +20,10 @@ public class PautaDTO {
    private long totalVostosNao;
    private long totalAbstencao;
   
+   public PautaDTO() {
+	   
+   }
+   
    public PautaDTO(Pauta pauta) {
 	   
 	   this.setId(pauta.getId());

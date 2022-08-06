@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.votacao.error.ResponseMsg;
 import br.com.votacao.model.Pauta;
 import br.com.votacao.model.dto.PautaDTO;
-import br.com.votacao.model.dto.PautaResponse;
-import br.com.votacao.repository.PautaRepository;
 import br.com.votacao.service.PautaService;
 
 
@@ -37,24 +35,21 @@ public class PautaController {
 	@Autowired
 	private PautaService service;
 	
-	@Autowired
-	private PautaRepository repository;
-	
 	@GetMapping("/lista")
 	@ResponseBody
 	public Page<Pauta> findPautas(@PageableDefault(sort = "id", 
 													  direction = Direction.DESC, 
 													  page = 0, size = 10) Pageable pageable) {
-		return repository.findAll(pageable);
+		return service.findAll(pageable);
 
 	}
 
 	
 	@GetMapping("/lista/{titulo}")
 	@ResponseBody
-	public List<PautaResponse> findPautas(@RequestParam String titulo) {
+	public List<PautaDTO> findPautas(@RequestParam String titulo) {
 		
-		return repository.findByTitulo(titulo);
+		return service.findByTitulo(titulo);
 		
 	}
 	
@@ -74,7 +69,7 @@ public class PautaController {
 	
 	@PostMapping
 	public ResponseEntity<PautaDTO> createPauta(@RequestBody @Valid Pauta pauta) {
-		pauta = repository.save(pauta);
+		pauta = service.save(pauta);
 		
 		return new ResponseEntity<>(new PautaDTO(pauta), HttpStatus.CREATED);
 		
@@ -82,7 +77,7 @@ public class PautaController {
 	
 	@PutMapping
 	public ResponseEntity<PautaDTO> updatePauta(@RequestBody @Valid Pauta pauta) {
-		Optional<Pauta>  upPauta = repository.findById(pauta.getId());
+		Optional<Pauta>  upPauta = service.findId(pauta.getId());
 		
 		if (upPauta.isPresent()) {
 			upPauta = Optional.ofNullable(pauta.atualiza(pauta));
@@ -90,7 +85,6 @@ public class PautaController {
 		}
 		
 		return ResponseEntity.notFound().build();
-		
 		
 	}
 	
