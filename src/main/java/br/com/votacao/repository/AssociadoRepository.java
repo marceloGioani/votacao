@@ -1,9 +1,8 @@
 package br.com.votacao.repository;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -16,7 +15,7 @@ public interface AssociadoRepository extends PagingAndSortingRepository<Associad
             + "WHERE associados.ativo is true")
     public long findTotalAssociadosAtivos();
 
-	public Page<Associado> findByNome(String nome, Pageable pageable);
+	public List<Associado> findByNome(String nome);
 	
 	public Optional<Associado> findByCpf(String cpf);
 	

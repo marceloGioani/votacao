@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,32 @@ public class VotoService {
     	
     	Date agora = new Date();
     	
-    	if (!(votacao.get().getSituacao().equals(TipoSituacaoVotacaoEnum.ABERTA)
+    	// verifica se é possível votar
+    	StatusVotacao(votacao, agora);
+    	
+    	// Se abertura agendada, Iniciar com o primeiro voto
+    	if (votacao.get().getAbertura().getTime() <= agora.getTime()) {
+    		if (votacao.get().getSituacao().equals(TipoSituacaoVotacaoEnum.ABERTA_NAO_INICIADA)) {
+    			votacao.get().setSituacao(TipoSituacaoVotacaoEnum.ABERTA);
+    			votacaoService.abreVotacao(votacao.get());
+    		}
+    		
+	    }
+    		
+    	voto.setDataHora(LocalDateTime.now());
+    	
+    	try {
+    		repository.save(voto);
+    	} catch (DataIntegrityViolationException e) {
+    		throw new Exception("Associado já votou. Voto Não contabilizado");
+
+		}
+    	
+    }
+
+	private void StatusVotacao(Optional<Votacao> votacao, Date agora) throws Exception {
+		
+		if (!(votacao.get().getSituacao().equals(TipoSituacaoVotacaoEnum.ABERTA)
     		|| votacao.get().getSituacao().equals(TipoSituacaoVotacaoEnum.ABERTA_NAO_INICIADA))) {
     		throw new Exception("Votação já foi encerrada. Voto Não contabilizado");
     	}
@@ -50,27 +73,8 @@ public class VotoService {
     			votacaoService.encerraVotacao(TipoSituacaoVotacaoEnum.ENCERRADA);
     		}	
     	
-    		throw new Exception("Votação votacao encerrada. Voto Não contabilizado");
+    		throw new Exception("Votação encerrada. Voto Não contabilizado");
     	}
-    	
-    	if (votacao.get().getAbertura().getTime() <= agora.getTime()) {
-    		if (votacao.get().getSituacao().equals(TipoSituacaoVotacaoEnum.ABERTA_NAO_INICIADA)) {
-    			votacao.get().setSituacao(TipoSituacaoVotacaoEnum.ABERTA);
-    			votacaoService.abreVotacao(votacao.get());
-    		}
-    		
-	    }
-    	
-    	
-    	voto.setDataHora(LocalDateTime.now());
-    	
-    	try {
-    		repository.save(voto);
-    	} catch (DataIntegrityViolationException e) {
-    		throw new Exception("Associado já votou. Voto Não contabilizado");
-
-		}
-    	
-    }
+	}
     
 }

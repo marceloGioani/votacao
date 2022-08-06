@@ -27,15 +27,13 @@ import br.com.votacao.service.VotacaoService;
 @RequestMapping ("/api/votacoes")
 public class VotacaoController {
 
-	//private static final String SCHEDULED_TASKS = "scheduledTasks";
-
 	@Autowired
 	private VotacaoService service;
 	
 	@Autowired
 	private VotacaoRepository repository;
 
-	@GetMapping (path = "/v1")
+	@GetMapping ("/v1")
 	@ResponseBody
 	public Page<VotacaoDto> findVotacao(@PageableDefault(sort = "id", direction = Direction.DESC, 
 										page = 0, size = 10) Pageable pageable) {
@@ -45,7 +43,7 @@ public class VotacaoController {
 		return VotacaoDto.convert(votacoes);
 	}
 
-	@GetMapping (path = "/v1/status/{id}")
+	@GetMapping ("/v1/status/{id}")
 	@ResponseBody
 	public ResponseEntity<Object> statusVotacao(@PathVariable long id) {
 		try {
@@ -60,8 +58,7 @@ public class VotacaoController {
 		
 	}
 	
-	
-	@PostMapping (path = "/v1/abrirVotacao")
+	@PostMapping ("/v1/abrirVotacao")
 	public ResponseEntity<Object> criarVotacao(@RequestBody @Valid Votacao votacao)  {
 		try {
 			votacao.validaTempo();

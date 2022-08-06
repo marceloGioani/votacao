@@ -24,10 +24,15 @@ public class PautaService {
 	private VotacaoService votacaoService;
 	
     public PautaDTO findById(long id) throws Exception {
+    	
     	Optional<Pauta> pauta = repository.findById(id);
+    	
     	if (pauta.isPresent()) {
+    		
     		VotacaoDto vtDao = votacaoService.statusVotacaoPauta(pauta.get().getId());
+    		
     		PautaDTO pautaDto = new PautaDTO(pauta.get());
+    		
     		pautaDto.setTotalVostos(vtDao.getTotalVostos());
     		pautaDto.setTotalVostosNao(vtDao.getTotalVostosNao());
     		pautaDto.setTotalVostosSim(vtDao.getTotalVostosSim());

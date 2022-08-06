@@ -1,5 +1,6 @@
 package br.com.votacao.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.votacao.error.ResponseMsg;
 import br.com.votacao.model.Pauta;
 import br.com.votacao.model.dto.PautaDTO;
+import br.com.votacao.model.dto.PautaResponse;
 import br.com.votacao.repository.PautaRepository;
 import br.com.votacao.service.PautaService;
 
@@ -38,20 +40,24 @@ public class PautaController {
 	@Autowired
 	private PautaRepository repository;
 	
-	@GetMapping
+	@GetMapping("/lista")
 	@ResponseBody
-	public Page<PautaDTO> findPautas(@RequestParam(required = false) String titulo, 
-			@PageableDefault(sort = "id", direction = Direction.DESC, page = 0, size = 10) Pageable pageable) {
-		Page<Pauta> pautas = null;
-		if (titulo == null) {
-			pautas = repository.findAll(pageable);
-		} else {
-			pautas = repository.findByTitulo(titulo, pageable);
-		}
-		
-		return PautaDTO.convert(pautas);
+	public Page<Pauta> findPautas(@PageableDefault(sort = "id", 
+													  direction = Direction.DESC, 
+													  page = 0, size = 10) Pageable pageable) {
+		return repository.findAll(pageable);
+
 	}
 
+	
+	@GetMapping("/lista/{titulo}")
+	@ResponseBody
+	public List<PautaResponse> findPautas(@RequestParam String titulo) {
+		
+		return repository.findByTitulo(titulo);
+		
+	}
+	
 	@GetMapping("/{id}")
 	@ResponseBody
 	public ResponseEntity<Object> find(@PathVariable Long id) {

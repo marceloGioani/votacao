@@ -1,5 +1,6 @@
 package br.com.votacao.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -25,7 +26,6 @@ import br.com.votacao.error.ResponseMsg;
 import br.com.votacao.model.Associado;
 import br.com.votacao.repository.AssociadoRepository;
 import br.com.votacao.service.AssociadoService;
-import br.com.votacao.service.ClienteService;
 
 
 @RestController
@@ -47,16 +47,20 @@ public class AssociadoController {
 	
 	@GetMapping("/lista")
 	@ResponseBody
-	public Page<Associado> findAssociados(@RequestParam(required = false) String nome, 
-			@PageableDefault(sort = "id", direction = Direction.DESC, page = 0, size = 10) Pageable pageable) {
-		Page<Associado> associados = null;
-		if (nome == null) {
-			associados = repository.findAll(pageable);
-		} else {
-			associados = repository.findByNome(nome, pageable);
-		}
+	public Page<Associado> findAssociados(@PageableDefault(sort = "id", 
+														   direction = Direction.DESC, 
+														   page = 0, size = 10) Pageable pageable) {
+		return repository.findAll(pageable);
+
+	}
+	
+	
+	@GetMapping("/lista/{nome}")
+	@ResponseBody
+	public List<Associado> findAssociados(@RequestParam String nome ){
+
+		return repository.findByNome(nome);
 		
-		return associados;
 	}
 	
 	@PostMapping
